@@ -101,7 +101,7 @@ public class PersistMmsAtomsStorage {
 
             // Start from scratch if build changes, since mixing atoms from different builds could
             // produce strange results.
-            if (!Build.FINGERPRINT.equals(atoms.getBuildFingerprint())) {
+            if (!String.valueOf(Build.TIME).equals(atoms.getBuildFingerprint())) {
                 Log.d(TAG, "[loadAtomsFromFile]: Build changed");
                 return makeNewPersistMmsAtoms();
             }
@@ -244,7 +244,7 @@ public class PersistMmsAtomsStorage {
         // allow pulling only after some time so data are sufficiently aggregated.
         long currentTime = getWallTimeMillis();
         PersistMmsAtoms atoms = PersistMmsAtoms.newBuilder()
-                .setBuildFingerprint(Build.FINGERPRINT)
+                .setBuildFingerprint(String.valueOf(Build.TIME))
                 .setIncomingMmsPullTimestampMillis(currentTime)
                 .setOutgoingMmsPullTimestampMillis(currentTime)
                 .build();
