@@ -59,9 +59,10 @@ public class DownloadRequest extends MmsRequest {
     private final String mLocationUrl;
     private final PendingIntent mDownloadedIntent;
     private final Uri mContentUri;
+    private final int mCallingUser;
 
     public DownloadRequest(RequestManager manager, int subId, String locationUrl,
-            Uri contentUri, PendingIntent downloadedIntent, String creator,
+            Uri contentUri, PendingIntent downloadedIntent, int callingUser, String creator,
             Bundle configOverrides, Context context, long messageId, MmsStats mmsStats,
             TelephonyManager telephonyManager) {
         super(manager, subId, creator, configOverrides, context, messageId, mmsStats,
@@ -69,6 +70,7 @@ public class DownloadRequest extends MmsRequest {
         mLocationUrl = locationUrl;
         mDownloadedIntent = downloadedIntent;
         mContentUri = contentUri;
+        mCallingUser = callingUser;
     }
 
     @Override
@@ -255,7 +257,7 @@ public class DownloadRequest extends MmsRequest {
      */
     @Override
     protected boolean transferResponse(Intent fillIn, final byte[] response) {
-        return mRequestManager.writePduToContentUri(mContentUri, response);
+        return mRequestManager.writePduToContentUri(mContentUri, response, mCallingUser);
     }
 
     @Override
@@ -377,5 +379,21 @@ public class DownloadRequest extends MmsRequest {
             // wapSize of 0.
         }
         return wapSize;
+    }
+
+    /**
+     * Calculates the PDU length for downloaded MMS.
+     *
+     * @param result Operation result code.
+     * @param response Received PDU bytes for download.
+     * @return The length of downloaded PDU if successful, otherwise 0.
+     */
+    @Override
+    protected int getPduLength(int result, byte[] response) {
+        int payloadSize = 0;
+        if (result == Activity.RESULT_OK && response != null) {
+            payloadSize = response.length;
+        }
+        return payloadSize;
     }
 }

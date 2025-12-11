@@ -82,7 +82,7 @@ public class MmsRequestRoboTest {
 
         mPersistMmsAtomsStorage = mock(PersistMmsAtomsStorage.class);
         mMmsStats = new MmsStats(mContext, mPersistMmsAtomsStorage, mSubId,
-                mTelephonyManager, null, true);
+                mTelephonyManager, null, true, 0);
         mCarrierConfigValues = new Bundle();
         mCarrierConfigValues.putInt(
                 CarrierConfigManager.KEY_MMS_MAX_NTN_PAYLOAD_SIZE_BYTES_INT,
@@ -151,9 +151,9 @@ public class MmsRequestRoboTest {
     public void downloadRequest_noSatellite_downloadSuccessful() {
         doReturn(150L).when(mSmsManager).getWapMessageSize(sFakeUri);
         DownloadRequest request = new DownloadRequest(mMmsService, mSubId, sFakeUri,
-                Uri.parse(sFakeUri), /* downloadIntent= */ null, /* callingPkg= */ null,
-                mCarrierConfigValues, /* context= */ mMmsService, sFakeMessageId, mMmsStats,
-                mTelephonyManager);
+                Uri.parse(sFakeUri), /* downloadIntent= */ null, CALLING_USER,
+                /* callingPkg= */ null, mCarrierConfigValues, /* context= */ mMmsService,
+                sFakeMessageId, mMmsStats, mTelephonyManager);
 
         boolean okToDownload = request.canTransferPayloadOnCurrentNetwork();
 
